@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { fetchData } from "../services/unsplash-api";
 import { SearchBar } from "./SearchBar/SearchBar";
 import Keys from "../services/ApiKEY.json";
@@ -8,33 +8,37 @@ import ErrorMessage from "./ErrorMessage/ErrorMessage";
 import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 import Loader from "./Loader/Loader";
 import ImageModal from "./ImageModal/ImageModal";
+import { UnsplashImage } from "../types/types";
 
 function App() {
-  const [query, setQuery] = useState("");
-  const [images, setImages] = useState([]);
-  const [loader, setLoader] = useState(false);
-  const [error, setError] = useState(false);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const notify = (message) => toast.error(message);
+  const [query, setQuery] = useState<string>("");
+  const [images, setImages] = useState<UnsplashImage[]>([]);
+  const [loader, setLoader] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
+  const notify = (message: string) => toast.error(message);
 
-  const [modalUrls, setModalUrls] = useState("");
-  const [alt, setAlt] = useState("");
-  const [modalIsOpened, setModalIsOpened] = useState(false);
+  const [modalUrls, setModalUrls] = useState<string>("");
+  const [alt, setAlt] = useState<string>("");
+  const [modalIsOpened, setModalIsOpened] = useState<boolean>(false);
 
-  const onSubmitFunc = (e) => {
+  const onSubmitFunc = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { nameImg } = e.target.elements;
-    if (!nameImg.value.trim()) {
+    const form = e.target as HTMLFormElement;
+
+    const nameImgInput = form.elements.namedItem("nameImg") as HTMLInputElement;
+
+    if (!nameImgInput.value.trim()) {
       return notify("Please enter a search query");
     }
-    console.log(query);
-    setQuery(nameImg.value);
+
+    setQuery(nameImgInput.value);
     setImages([]);
     setError(false);
     setPage(1);
-    e.target.reset();
+    e.currentTarget.reset();
   };
 
   const onLoadMore = () => {
@@ -43,7 +47,7 @@ function App() {
 
   useEffect(() => {
     if (query) {
-      const ApiKey = Keys.ApiKey;
+      const ApiKey: string = Keys.ApiKey;
       const fetchDatas = async () => {
         try {
           setError(false);
@@ -65,7 +69,7 @@ function App() {
     }
   }, [query, page]);
 
-  const openModal = (alt, modalUrls) => {
+  const openModal = (alt: string, modalUrls: string) => {
     setModalIsOpened(true);
     setAlt(alt);
     setModalUrls(modalUrls);

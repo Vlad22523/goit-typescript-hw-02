@@ -1,6 +1,12 @@
+import { UnsplashImage } from "../../types/types";
 import s from "./ImageCard.module.css";
 
-export const ImageCard = ({ data, openModal }) => {
+interface ImageCardProps {
+  data: UnsplashImage;
+  openModal: (alt: string, modalUrls: string) => void;
+}
+
+export const ImageCard: React.FC<ImageCardProps> = ({ data, openModal }) => {
   return (
     <div className={s.card}>
       <img
